@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Process Manager</title>
+		<!--Se importan Frameworks, librerias y CSS-->
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+	  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+	  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="OS_CSS.css">
+</head>
+<body>
+ 	<!-- Header -->
+	<div class="wrapper">
+		<center>
+		  <h1>Tubi OS</h1>
+		</center>
+	</div>
+	<!-- Cierra el Header -->
+
+		<!-- Cierra sesión -- >
+		<button id="Log_Out">Log Out</button>
+
+
+		<!-- Botones de control -->
+		<center>	
+		<button class="disable" id="play"><img src="play-button.png"></button>
+		<button id="pause"><img src="pause.png"></button>
+		<button id="stop"><img src="stop.png"></button>
+		</center>
+
+		<!-- Display del Reloj-->
+		<div id="clock">Tiempo: 0</div>
+
+
+		<!-- Tabla del Process Control Block -->
+		<div class="container">	
+			 <div class="col-sm-4">
+		<div id="PCB">
+			<table class="table table-dark table-hover">
+				<thead>
+					<tr>
+					<th>ID</th>
+					<th>Hora de Llegada</th>
+					<th>Duración</th>
+					<th>Tiempo Acumulado</th>
+					<th>Uso de Impresoras</th>
+					<th>Tiempo E/S</th>
+					<th>Tiempo de Impresión</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id = "si">
+						<td>Proceso 1</td>
+					</tr>
+					<tr>
+					<td> Proceso 2</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+	<!-- Listas de procesos -->
+	<div class = "container">
+		<div class = "row">
+		<div class = "list" id="New">New<ul></ul></div>
+		<div class = "list" id="Ready">Ready<ul></ul></div>
+		<div class = "list" id="Waiting">Waiting<ul></ul></div>
+		</div>
+		<div class = "row">
+		<center>
+		<div class = "list" id="Printing">Printing<ul></ul></div>
+		<div class = "list" id="Finish">Finish<ul></ul></div>
+		</center>
+		</div>
+	</div>
+
+
+
+
+
+	<script type="text/javascript">
+		//variables
+		var tic = 0;
+
+		//Desactivar boton de play cuando se presiona
+		$('.disable').click(function(){
+  		 $(this).prop("disabled", true);
+		});
+
+		//Inicia La simulación
+		$("#play").click(function(){
+			//corre la funcion Tiempo cada segundo
+			var timer = setInterval(Tiempo,1000) 
+					function Tiempo(){
+
+					//empieza a correr el reloj y lo imprime en pantalla
+					tic++;
+					$("#clock").text("Tiempo: "+tic);
+
+
+					$("#si").append("<td>"+tic+"</td>")
+					//Pausa la simulación y reactiva Play	
+					$("#pause").click(function(){
+					clearInterval(timer);
+  		 			$(".disable").prop('disabled', false);
+					});
+
+					//Detiene La simulación y reactiva Play
+					$("#stop").click(function(){
+						clearInterval(timer);
+						tic=0;
+						$(".disable").prop("disabled", false);
+					});
+				console.log(x);
+			}
+		});
+		//Cierra sesión y vuelve a Login
+		$("#Log_Out").click(function(){
+			window.location.replace("login.html")
+		});
+	</script>
+</body>
+</html>

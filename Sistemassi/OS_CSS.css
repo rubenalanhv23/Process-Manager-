@@ -1,0 +1,31 @@
+.wrapper{
+	display: grid;
+	grid-template-columns:repeat(3, 1fr);
+	background-color:  #006bb3;
+	max-height: 150px;
+	letter-spacing: .6px;
+	box-shadow: 0px 10px 50px  #e6e600;
+	padding: 0px;
+}
+.list{
+	width: 300px;
+	height: 244px;
+	background-color: gray;
+	border-top-style: solid;
+	border-color: black;
+}
+#play{
+	
+	width:auto;
+	padding: 2%;
+}
+#pause{
+	
+	width:auto;
+	padding: 2%;
+}
+#stop{
+	
+	width:auto;
+	padding: 2%;
+}
