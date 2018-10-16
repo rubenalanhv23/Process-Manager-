@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Process Manager</title>
+		<!--Se importan Frameworks, librerias y CSS-->
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+	  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+	  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="OS_CSS.css">
+</head>
+<body>
+ 	<!-- Header -->
+	<div class="row" id="header">
+		<center>
+		  <h1>fur<span id="os">OS</span>ity</h1>
+		</center>
+		<div class="col-3"></div>
+		<button class="btn btn-primary btn-sm" id="help">help</button>
+	</div>
+	<br>
+	<br>
+	<!-- Cierra el Header -->
+
+		<!-- Botones de control -->
+		
+<div class = "row">
+	<div class = "col-lg-3">
+		<div class="Wrapper">
+		<button class="disable" id="play"><img src="play-button.png"></button>
+		<button class="stylebutton" id="pause"><img src="pause.png"></button>
+		<button class="stylebutton" id="stop"><img src="stop.png"></button>
+		</div>	
+		<button id="slow" class="btn btn-primary ">slow</button>
+		<button id="normal" class="btn btn-primary">normal</button>
+		<button id="fast"class="btn btn-primary">fast</button>
+	</div>
+	<div class = "col-lg-3">
+		<div class="input-group">
+		<input type="text" class="form-control" placeholder="probabilidad procesos"  id = "proceso">
+		<div class="input-group-btn">
+		<button class="btn btn-primary" type="submit" id="boton_proceso">load</button>
+		</div>
+		</div>
+		<div class="input-group">
+		<input type="text" class="form-control" placeholder="Quantum"  id = "quantu">
+		<div class="input-group-btn">
+		<button class="btn btn-primary" type="submit" id="boton_quantum">load</button>
+		</div>
+		</div>
+
+		<div class="input-group">
+		<input type="text" class="form-control" placeholder="duracion media procesos"  id ="duracion_media">
+		<div class="input-group-btn">
+		<button class="btn btn-primary" type="submit" id="boton_duracion_media">load</button>
+		</div>
+		</div>
+
+
+		<div class="input-group">
+		<input type="text" class="form-control" placeholder="probabilidad de IO" id = "probabilidad_impresion">
+		<div class="input-group-btn">
+		<button class="btn btn-primary " type="submit" id="boton_probabilidad_impresion">load</button>
+		</div>
+		</div>
+				<div class="input-group">
+		<input type="text" class="form-control" placeholder="carga maxima de procesos" id = "carga_maxima">
+		<div class="input-group-btn">
+		<button class="btn btn-primary " type="submit" id="boton_carga">load</button>
+		</div>
+		</div>
+		<div class="input-group">
+		<input type="text" class="form-control" placeholder="duracion de impresion" id = "duracion_impresion">
+		<div class="input-group-btn">
+		<button class="btn btn-primary " type="submit" id="boton_duracion_impresion">load</button>
+		</div>
+		</div>
+	</div>
+	<div class ="col-lg-3" id="uno">
+			<span>Quantum: <div id="Quantum"></div></span><br>
+			<span><div id="clock">Ciclo:   0</div></span>
+			<span>Running: <div id="Running"></div></span>
+			<span>Printing: <div id="Printing"></div></span>
+			<br><br>
+			
+		</div>
+	</div>
+</div>
+	<br><br>
+		<!-- Display del Reloj y Running-->
+
+	<!-- Listas de procesos -->
+		<center>
+		<div class = Wrapper>
+		<div class = "row">
+		<span>New<div class = "list" id="New"></div></span>
+		<span>Ready<div class = "list" id="Ready"></div></span>
+		<span>Waiting<div class = "list" id="Waiting"></div></span>
+		<span>Fisnish<div class = "list" id="Finish"></div></span>
+		</div>
+		</center>
+		<!-- Tabla del Process Control Block -->
+		<center></center>
+		<div id="PCB" class="col"  >	
+			<table class="table table-dark table-hover" >
+				<thead>
+					<tr>
+					<th id="id_pcb">ID</th>
+					<th id="hora_de_llegada_pcb">Hora de Llegada</th>
+					<th id="duracion_pcb">Duración</th>
+					<th id="tiempo_acumulado_pcb">Tiempo Acumulado</th>
+					<th id="uso_io_pcb">Uso de Impresoras</th>
+					<th id="tiempo_impresion_pcb">Tiempo de Impresión</th>
+					</tr>
+			</table>
+		</div>
+	<script type="text/javascript">
+		//variables
+		var Quantum = 5;
+		var procesos_vivos=20;
+		var ciclos = 0;
+		var input_probabilidad_impresion = 50;
+		var duracion_proceso = 20;
+		var input_probabilidad = 50;
+		var se_crea_proceso = 0;
+		var list_new = [];
+		var list_ready = [];
+		var list_running = [];
+		var list_waiting = [];
+		var list_finished = [];
+		var uso_de_IO;
+		var bandera_parametro = 1;
+		var bandera_disable = 1;
+		var tiempo_de_impresion = 4;
+		var hora_llegada_io_pcb;
+		var duracion_proceso_x;
+		var json={};
+		var proceso;	
+		var cont_proceso = 0;
+		var bandera_OS =0;
+		var y,s,i;
+		var OS = [];
+		var tiempo_acum_procesos=0;
+		var dur_os = 0;
+		var list_dur=[];
+		var bandera_io;
+		var list_io = [];
+		var acum_io = 0;
+		var list_printing = [];
+		var bandera_imprimiendo = 0;
+		var bandera_waiting = 0;
+		var acum_imprimiendo=0;
+		var cont_quantum =0;
+		var acum_proceso =0;
+		var v;
+		var tiempoio = [];
+		var proceso_duracion ;
+		var proceso1;
+		var proceso2= [];
+		var proceso_duracion3 = [];
+		var proceso_duracion2 = [];
+		var proceso_duracion1 = [];
+		var proceso_duracion = [];
+		var tiempoio2= [];
+		var tiempoio1= [];
+		var list_banderas_io = []
+		var bandera_io_actual = [];
+		var bandera_io_actual1 = [];
+		var bandera_io_actual2 =[];
+		var x1;
+		var x2;
+		var x3;
+		var x4;
+		var x5;
+		var x6;
+		var x7;
+		var x56;
+		var x11;
+		var x55=0;
+		var random;
+		var cont_impresion=0;
+		var imprimio =0;
+		var bandera_OS1=0;
+		var input_velocidad = 1000;
+		var ban_quan =0;
+		var cont_duracion= [];
+		//Desactivar boton de play cuando se presiona\
+		$('.disable').click(function(){
+  		$(this).prop("disabled", true);
+		});
+		//Inicia La simulación
+		$("#play").click(function(){
+			bandera_parametro = 0;
+			var timer = setInterval(Tiempo, input_velocidad) 
+					function Tiempo(){
+						random = Math.floor((Math.random()*100));
+						ciclos++;
+						$("#clock").text("Ciclo: "+" "+ciclos);
+						if(random < input_probabilidad ){
+						new1();
+						}
+						show_lists();
+						fun_OS();
+						fun_Ready();
+						quantum();	
+						io();		
+			}
+					function new1(){
+						var random_io = Math.floor((Math.random()*9));
+						var random_proceso = Math.random() >= 0.5;
+						var random1 = Math.floor((Math.random()*100));
+						if(random_proceso == true){
+							duracion_proceso_x = duracion_proceso + random_io;
+						}
+						else if (random_proceso == false){
+							duracion_proceso_x = duracion_proceso - random_io;
+						}
+						var random_imp = Math.floor(Math.random()*12);
+						if(random1 > input_probabilidad_impresion){
+							hora_llegada_io_pcb = duracion_proceso_x - random_imp -1;
+						}
+						else if(random1 < input_probabilidad_impresion){
+							hora_llegada_io_pcb = ("No hay");
+						}
+							if(random1 > input_probabilidad_impresion){
+								uso_de_IO = ('SI');
+								bandera_io = 1;
+							}
+							else if (random1 < input_probabilidad_impresion){
+								uso_de_IO = ('NO');
+								bandera_io = 0;
+							}
+							cont_proceso++
+							proceso = "Proceso "+cont_proceso;
+							json = {proceso:proceso, Duracion: duracion_proceso_x, probabilidad_de_IO: uso_de_IO, tiempo_io: hora_llegada_io_pcb}
+							list_new.push(json.proceso);
+							list_dur.push(json.Duracion);
+							list_io.push(json.tiempo_io);
+							list_banderas_io.push(bandera_io);
+							show_pcb();		
+					}
+					function show_pcb(){
+						$("#id_pcb").append("<tr>"+"<td>"+json.proceso+"</td>"+"</tr>");
+						$("#hora_de_llegada_pcb").append("<tr>"+"<td>"+ciclos+"</td>"+"</tr>");
+						$("#duracion_pcb").append("<tr>"+"<td>"+json.Duracion+"</td>"+"</tr>");
+						$("#uso_io_pcb").append("<tr>"+"<td>"+json.probabilidad_de_IO+"</td>"+"</tr>");
+						$("#tiempo_impresion_pcb").append("<tr>"+"<td>"+json.tiempo_io+"</td>"+"</tr>");
+						$("#tiempo_acumulado_pcb").append("<tr>"+"<td>"+s+"</td>"+"</tr>");
+					}
+					function show_lists(){
+						$("#New").empty();
+						$("#New").append(list_new.join("<br>"));
+						$("#Ready").empty();
+						$("#Ready").append(list_ready.join("<br>"));
+						$("#Running").empty();
+						$("#Running").append(OS.join(" "));
+						$("#Finish").empty();
+						$("#Finish").append(list_finished.join("<br>"));
+						$("#Printing").empty();
+						$("#Printing").append(list_printing.join(" "));
+						$("#Waiting").empty();
+						$("#Waiting").append(list_waiting.join("<br>"));
+						$("#Quantum").empty();
+						$("#Quantum").append(cont_quantum);		
+					}
+					function fun_Ready(){
+						if(list_new.length > 0 && bandera_OS == 0){
+
+							proceso1 = list_new.shift(json.proceso);
+							list_ready.push(proceso1);	
+							x1 = list_dur.shift(json.Duracion);
+							proceso_duracion.push(x1);
+							x2 = list_io.shift(json.tiempo_io);
+							tiempoio.push(x2)
+							x3 = list_banderas_io.shift(bandera_io);
+							bandera_io_actual.push(x3);	
+						}
+					}	
+						function fun_OS(){
+							if(bandera_OS==0){
+								$("#Running").text("OS");
+									if(list_ready.length > 0){
+										var x9 = tiempoio.shift();
+									 	tiempoio1.push(x9);
+										x4 = list_ready.shift();
+										OS.push(x4);
+										x5 = proceso_duracion.shift();
+										proceso_duracion1.push(x5);
+										x6 = bandera_io_actual.shift();
+										bandera_io_actual1.push(x6);
+									  bandera_OS=1;
+									}
+							}
+							else if(bandera_OS == 1){
+								if(cont_quantum == 0){
+									while(list_new.length>0){
+										var rf = list_new.shift()
+										list_ready.push(rf);
+									}
+							    var lq = []
+								lq = OS.shift();
+								list_ready.push(lq);
+								var x56 = proceso_duracion1.shift();
+								x56;
+								proceso_duracion2.push(x56);
+								console.log(proceso_duracion2);
+								var c2 = tiempoio1.shift();
+								tiempoio2.push(c2);
+								var c3 = bandera_io_actual1.shift();
+								bandera_io_actual2.push(c3);
+								bandera_OS = 0;
+								cont_quantum =0;
+								}
+							}
+						 }
+						function quantum(){
+							var c45 = proceso_duracion2.shift();
+							proceso_duracion3.push(c45);
+						if(bandera_OS == 1){
+								cont_quantum++;
+								x55++;
+								
+						}
+						if(x55 == proceso_duracion3){
+							var c5= OS.shift()
+							list_finished.push(c5)
+						    bandera_OS = 0;
+						    cont_quantum =0;
+						}
+
+						
+						if(cont_quantum >= Quantum){
+								cont_quantum = 0;
+						}					
+						}
+						 function io(){
+						 	// if(cont_quantum == 0){
+						 	// 	if(bandera_io_actual2 == 1){
+						 	// 		if(proceso_duracion2 == tiempoio2){
+						 	// 			var c4 = OS.shift();
+						 	// 			list_printing.push(c4);
+						 	// 			bandera_imprimiendo = 1;
+						 	// 			bandera_OS =0;
+						 	// 		}
+						 	// 	}
+						 	// }
+						 }
+			 	//Pausa la simulación y reactiva Play	
+			 		$("#pause").click(function(){
+			 				clearInterval(timer);
+	  	 	 				$(".disable").prop('disabled', false);
+	  	 	 				bandera_parametro = 1;
+			 		});
+				//Detiene La simulación y reactiva Play
+			 		$("#stop").click(function(){
+						var sdf = confirm("Sure? ")
+						if(sdf == true){
+							location.reload();
+						}
+						else{
+							clearInterval(timer);
+	  	 	 				$(".disable").prop('disabled', false);
+	  	 	 				bandera_parametro = 1;
+						}
+					});
+			$("#slow").click(function(){
+				if(bandera_parametro == 1){
+					input_velocidad = 3000;
+				}
+				else if(bandera_parametro == 0){
+					alert("no se puede");
+				}
+			});
+			$("#normal").click(function(){
+				if(bandera_parametro == 1){
+					input_velocidad = 1000;
+				}
+				else if(bandera_parametro == 0){
+					alert("no se puede");
+				}
+			});
+			$("#fast").click(function(){
+				if(bandera_parametro == 1){
+					input_velocidad = 500;
+				}
+				else if(bandera_parametro == 0){
+					alert("no se puede");
+				}
+			});
+
+					});		
+			//Modifica parametros mientras se esta en Pause o Stop
+			//probabilidad de que se cree proceso
+			$("#boton_proceso").click(function(){
+				if(bandera_parametro == 1){
+					input_probabilidad = $("#proceso").val();
+					if(isNaN(input_probabilidad) == true || input_probabilidad < 0){
+						alert("no se puede");
+					}
+					$("#proceso").val("");
+				}	
+				else if (bandera_parametro == 0){
+					alert("no se puede");
+				}	
+			});
+				$("#boton_duracion_impresion").click(function(){
+				if(bandera_parametro == 1){
+					duracion_impresion = $("#duracion_impresion").val();
+					if(isNaN(duracion_impresion) == true || duracion_impresion < 0){
+						alert("no se puede");
+					}
+				$("#duracion_impresion").val("")
+				}	
+				else if (bandera_parametro == 0){
+					alert("no se puede");
+				}	
+			});
+				$("#boton_carga").click(function(){
+				if(bandera_parametro == 1){
+					procesos_vivos = $("#carga_maxima").val();
+					if(isNaN(procesos_vivos) == true || procesos_vivos < 0){
+						alert("no se puede");
+					}
+					$("#carga_maxima").val("");
+				}	
+				else if (bandera_parametro == 0){
+					alert("no se puede");
+				}	
+			});
+			//Quantum
+			$("#boton_quantum").click(function(){
+				if(bandera_parametro == 1){
+					Quantum = $("#quantu").val();
+					if(isNaN(Quantum) == true || Quantum < 0){
+						alert("no se puede")
+					}
+					$("#quantu").val("");
+				}
+				else if( bandera_parametro == 0){
+					alert("no se puede");
+				}
+			});
+			//Duracion Media
+			$("#boton_duracion_media").click(function(){
+				if(bandera_parametro == 1){
+					duracion_proceso = $("#duracion_media").val();
+					if(isNaN(duracion_proceso) == true || duracion_proceso<0){
+						alert("no se puede")
+					}
+					$("#duracion_media").val("");
+				}
+				else if(bandera_parametro == 0){
+					alert("no se puede");
+				}
+			});
+			//Probabilidad de Impresion
+			$("#boton_probabilidad_impresion").click(function(){
+				if(bandera_parametro == 1){
+				input_impresion = $("#probabilidad_impresion").val();
+					if(isNaN(input_impresion) == true || input_impresion<0){
+						alert("no se puede")
+					}
+
+					$("#probabilidad_impresion").val("");
+				}
+				else if(bandera_parametro == 0){
+					alert("no se puede");
+				}
+			});
+			$("#help").click(function(){
+				window.open("help.html")
+			})
+
+	</script>
+</body>
+</html>
